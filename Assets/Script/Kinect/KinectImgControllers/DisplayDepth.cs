@@ -10,17 +10,12 @@ public class DisplayDepth : MonoBehaviour {
 
     private Texture2D tex;
 
-    private Texture2D texture;
-
-    private byte[] pixels;
-
     public float minHeight;
     public float maxHeight;
 
     // Use this for initialization
     void Start () {
 		tex = new Texture2D(320,240,TextureFormat.ARGB32,false);
-        texture = new Texture2D(320, 240, TextureFormat.RGB24, false);
 
         GetComponent<Renderer>().material.mainTexture = tex;
 	}
@@ -70,16 +65,6 @@ public class DisplayDepth : MonoBehaviour {
 		}
 		return img;
 	}
-
-    private void DepthToPixels(short[] depthData)
-    {
-        float depthToLevel;
-        for(int i = 0; i > depthData.Length;i++)
-        {
-            depthToLevel = depthData[i];
-            pixels[i] = (byte)MapRange(depthToLevel, 800, 900, 255f, 0);
-        }
-    }
 
     int MapRange(float x, float in_min, float in_max, float out_min, float out_max)
     {

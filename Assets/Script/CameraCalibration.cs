@@ -4,7 +4,7 @@ using System.Collections;
 public class CameraCalibration : MonoBehaviour {
 
 
-    private Camera camera;
+    private new Camera camera;
     private bool boost = false;
     private FileSaver fileSaver;
 
@@ -18,7 +18,7 @@ public class CameraCalibration : MonoBehaviour {
     void Start () {
         camera = GetComponent<Camera>();
         fileSaver = new FileSaver();
-    }
+    } 
 
     // Update is called once per frame
     void Update () {
@@ -57,7 +57,6 @@ public class CameraCalibration : MonoBehaviour {
                 if (boost)
                     camera.fieldOfView -= zoomSpeed * PerspectiveBoost * Time.deltaTime;
             }
-
         }
 
         if (boost)
@@ -94,6 +93,7 @@ public class CameraCalibration : MonoBehaviour {
                 camera.transform.position = (Vector3)read[0];
                 camera.fieldOfView = (float)read[1];
             }
+
         }
 
     }

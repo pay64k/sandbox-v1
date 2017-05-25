@@ -11,21 +11,21 @@ public class FileSaver {
     {
         MonoBehaviour.print("written file no: " + fileIndexCounter.ToString());
         string[] foo = map.OfType<object>().Select(o => o.ToString()).ToArray();
-        //System.IO.File.WriteAllLines(@"C:\Users\s127578\Desktop\testFolder\HeightMap" + fileIndexCounter + ".txt", foo);
-        System.IO.File.WriteAllLines(@"C:\Users\s127578\PycharmProjects\untitled\map", foo);
+        System.IO.File.WriteAllLines(@"Assets\HeightMaps\HeightMap" + fileIndexCounter + ".txt", foo);
+        //System.IO.File.WriteAllLines(@"C:\Users\s127578\PycharmProjects\untitled\map", foo);
         fileIndexCounter++; 
     }
 
     public void saveCameraPosition(Vector3 position, float fov)
     {
 
-        System.IO.File.WriteAllLines(@"C:\Users\s127578\Desktop\testFolder\positions_v1.txt", new string[2] { position.ToString("G4"), fov.ToString("G6") });
+        System.IO.File.WriteAllLines(@"Assets\CameraCalibration\positions_v1.txt", new string[2] { position.ToString("G4"), fov.ToString("G6") });
         MonoBehaviour.print("Saved camera: " + position.ToString("G4") + fov.ToString("G6"));
     }
 
     public ArrayList loadCameraPosition()
     {
-        string[] lines = System.IO.File.ReadAllLines(@"C:\Users\s127578\Desktop\testFolder\positions_v1.txt");
+        string[] lines = System.IO.File.ReadAllLines(@"Assets\CameraCalibration\positions_v1.txt");
         Vector3 position = StringToVector3(lines[0]);
         float fov = float.Parse(lines[1]);
         ArrayList list = new ArrayList();
