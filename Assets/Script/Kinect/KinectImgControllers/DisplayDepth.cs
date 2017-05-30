@@ -35,6 +35,21 @@ public class DisplayDepth : MonoBehaviour {
         {
             fSaver.SaveDepthMap(dw.depthImg);
         }
+
+        if (Input.GetKeyDown("f1"))
+        {
+            float sum = 0;
+            int num = 0;
+            foreach (short dep in dw.depthImg){
+                if(dep > 800)
+                {
+                    sum += dep;
+                    num++;
+                }
+        
+            }
+            print((sum / dw.depthImg.Length));
+        }
 	}
 	
 	private Color32[] convertDepthToColor(short[] depthBuf)
@@ -43,7 +58,6 @@ public class DisplayDepth : MonoBehaviour {
 		for (int pix = 0; pix < depthBuf.Length; pix++)
 		{
 			img[pix].r = (byte)MapRange(depthBuf[pix], maxHeight, minHeight , 0, 255f); 
-
 			img[pix].g = (byte)(depthBuf[pix] / 8);
 			img[pix].b = (byte)(depthBuf[pix] / 8);
 		}

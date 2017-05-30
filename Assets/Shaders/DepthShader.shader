@@ -17,6 +17,7 @@
 			#pragma fragment frag
 			// make fog work
 			#pragma multi_compile_fog
+			//#pragma surface surf Lambert
 			
 			#include "UnityCG.cginc"
 
@@ -38,87 +39,30 @@
 			float4 _MainTex_ST;
 			sampler2D HeightMap;
 
-			//fixed4 get_color(float height)
-			//{
-			//	fixed4 color = (1.0, 1.0, 1.0, 1.0);
-
-			//	if (height < 0.10f) {
-			//		color = fixed4(0.2, 0.9, 0.0, 1.0);
-			//	}
-
-			//	else if (height < 0.2f) {
-			//		color = fixed4(0.61, 0.91, 0.04, 1.0);
-			//	}
-				
-			//	else if (height < 0.30f) {
-			//		color = fixed4(0.93, 0.86, 0.08, 1.0);
-			//	}
-
-			//	else if (height < 0.40f) {
-			//		color = fixed4(0.95, 0.52, 0.12, 1.0);
-			//	}
-				
-			//	else if (height < 0.50f) {
-			//		color = fixed4(0.97, 0.20, 0.16, 1.0);
-			//	}
-
-			//	return color;
-
-			//}
+			fixed4 lines(out fixed4 fragColor, in fixed4 fragCoord){
+				fixed2 uv = fragCoord.xy / 2;
+				fragColor = fixed4(1.0, 1.0, 1.0, 1.0);
+				float N = 10.0f;
+				if( max(0.0f, (uv.x * N) - floor(uv.x * N)) < 0.1f/N) {
+					fragColor = fixed4(0.0, 0.0, 0.0, 1.0);
+				}
+			}
 
 			fixed4 get_color(float height)
 			{
-				fixed4 color = (1.0, 1.0, 1.0, 1.0);
-	if (height < 0.00f) { color = fixed4(0.00,0.20,0.40,1.0);}
-	else if (height < 0.07f) { color = fixed4(0.07,0.42,0.63,1.0);}
-	else if (height < 0.13f) { color = fixed4(0.53,0.81,0.98,1.0);}
-	else if (height < 0.20f) { color = fixed4(0.69,0.89,1.00,1.0);}
-	else if (height < 0.27f) { color = fixed4(0.00,0.38,0.28,1.0);}
-	else if (height < 0.33f) { color = fixed4(0.06,0.48,0.18,1.0);}
-	else if (height < 0.40f) { color = fixed4(0.91,0.84,0.49,1.0);}
-	else if (height < 0.47f) { color = fixed4(0.63,0.26,0.00,1.0);}
-	else if (height < 0.53f) { color = fixed4(0.51,0.12,0.12,1.0);}
-	else if (height < 0.60f) { color = fixed4(1.00,1.00,1.00,1.0);}
+				fixed4 color = fixed4(1.0, 1.0, 1.0, 1.0);
 
-				//if (height < 0.07f) {
-				//	color = fixed4(0.1, 0.0, 0.39, 1.0);
-				//}
+				if (height < 0.00f) { color = fixed4(0.00,0.20,0.40,1.0);}
+				else if (height < 0.07f) { color = fixed4(0.07,0.42,0.63,1.0);}
+				else if (height < 0.13f) { color = fixed4(0.53,0.81,0.98,1.0);}
+				else if (height < 0.20f) { color = fixed4(0.69,0.89,1.00,1.0);}
+				else if (height < 0.27f) { color = fixed4(0.00,0.38,0.28,1.0);}
+				else if (height < 0.33f) { color = fixed4(0.06,0.48,0.18,1.0);}
+				else if (height < 0.40f) { color = fixed4(0.91,0.84,0.49,1.0);}
+				else if (height < 0.47f) { color = fixed4(0.63,0.26,0.00,1.0);}
+				else if (height < 0.53f) { color = fixed4(0.51,0.12,0.12,1.0);}
+				else if (height < 0.60f) { color = fixed4(1.00,1.00,1.00,1.0);}
 
-				//else if (height < 0.15f) {
-				//	color = fixed4(0.0, 0.20, 0.40, 1.0);
-				//}
-				
-				//else if (height < 0.21f) {
-				//	color = fixed4(0.09, 0.55, 0.80, 1.0);
-				//}
-
-				//else if (height < 0.30f) {
-				//	color = fixed4(0.95, 0.52, 0.12, 1.0);
-				//}
-				
-				//else if (height < 0.32f) {
-				//	color = fixed4(0.97, 0.20, 0.16, 1.0);
-				//}
-
-				//else if (height < 0.35f) {
-				//	color = fixed4(0.97, 0.20, 0.16, 1.0);
-				//}
-
-				//else if (height < 0.37f) {
-				//	color = fixed4(0.97, 0.20, 0.16, 1.0);
-				//}
-
-				//else if (height < 0.41f) {
-				//	color = fixed4(0.97, 0.20, 0.16, 1.0);
-				//}
-
-				//else if (height < 0.46f) {
-				//	color = fixed4(0.97, 0.20, 0.16, 1.0);
-				//}
-
-				//else if (height < 0.46f) {
-				//	color = fixed4(0.97, 0.20, 0.16, 1.0);
-				//}
 				return color;
 
 			}
@@ -134,6 +78,7 @@
 				vertexws = float4(vertexws.x, height, vertexws.z , vertexws.w);
 				
 				o.color = get_color(height);
+				//o.color = lines(v.uv);
 
 				o.vertex = mul(UNITY_MATRIX_VP, vertexws);
 
@@ -149,6 +94,7 @@
 				return col;
 				//return half4(1.0, 0.0, 0.0, 1.0);
 			}
+
 			ENDCG
 		}
 	}
