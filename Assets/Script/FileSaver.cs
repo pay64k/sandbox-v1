@@ -35,6 +35,23 @@ public class FileSaver {
         return list;
     }
 
+    public void SaveBornholm(short[] map)
+    {
+        //MonoBehaviour.print("Saving to Bornholm directory");
+        string[] foo = map.OfType<object>().Select(o => o.ToString()).ToArray();
+        System.IO.File.WriteAllLines(@"C:\MatchBornholm\HeightMap\HeightMap.txt", foo);
+    }
+
+    public string ReadScore()
+    {
+        string[] lines = System.IO.File.ReadAllLines(@"C:\MatchBornholm\Results\Score.txt");
+        return lines[0];
+
+    }
+
+    //----------------------------------------------------
+
+
     public static Vector3 StringToVector3(string sVector)
     {
         // Remove the parentheses
