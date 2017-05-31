@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
-using MathNet.Filtering;
 using System;
+using AForge.Imaging.Filters;
+using System.Drawing;
 
 [RequireComponent(typeof(Renderer))]
 public class DisplayDepth : MonoBehaviour {
@@ -21,6 +22,8 @@ public class DisplayDepth : MonoBehaviour {
 
     public float minHeight;
     public float maxHeight;
+
+    private bool _saved = true;
 
     // Use this for initialization
     void Start () {
@@ -43,7 +46,53 @@ public class DisplayDepth : MonoBehaviour {
             var filterResult = blaFilter(dw.depthImg);
 
             //tex.SetPixels32(convertDepthToColor(dw.depthImg));
-            tex.SetPixels32(convertDepthToColor(dw.depthImg));
+            UnityEngine.Color32[] depthImgConverted = convertDepthToColor(dw.depthImg);
+
+            //Mean filter = new Mean();
+            GaussianBlur filter = new GaussianBlur(4, 11);
+            Bitmap image1 = new Bitmap(320,240);
+            for (int Xcount = 0; Xcount < image1.Width; Xcount++)
+            {
+                for (int Ycount = 0; Ycount < image1.Height; Ycount++)
+                {
+                    System.Drawing.Color col = System.Drawing.Color.FromArgb(
+                        depthImgConverted[Ycount*image1.Width + Xcount].a,
+                        depthImgConverted[Ycount * image1.Width + Xcount].r,
+                        depthImgConverted[Ycount * image1.Width + Xcount].g,
+                        depthImgConverted[Ycount * image1.Width + Xcount].b
+                        );
+
+                    image1.SetPixel(Xcount, Ycount, col);
+                }
+            }
+            if (!_saved)
+            {
+                image1.Save("image1.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                //_saved = !_saved;
+
+            }
+            Bitmap image2 = filter.Apply(image1);
+
+            Color32[] color32Tex = new Color32[image2.Width * image2.Height];
+
+            for (int Xcount = 0; Xcount < image2.Width; Xcount++)
+            {
+                for (int Ycount = 0; Ycount < image2.Height; Ycount++)
+                {
+                    color32Tex[Ycount * image2.Width + Xcount] = new Color32(
+                        image2.GetPixel(Xcount, Ycount).R,
+                        image2.GetPixel(Xcount, Ycount).G,
+                        image2.GetPixel(Xcount, Ycount).B,
+                        image2.GetPixel(Xcount, Ycount).A);
+                }
+            }
+
+            if (!_saved)
+            {
+                image2.Save("image2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                _saved = !_saved;
+            }
+            tex.SetPixels32(color32Tex);
 
             tex.Apply(false);
             renderer.material.SetTexture("_MainTex", tex);
