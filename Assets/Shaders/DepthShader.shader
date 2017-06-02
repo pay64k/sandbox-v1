@@ -73,6 +73,9 @@
 				//float height = v.vertex.z + 1.0;// 
 				float4 vertexws = mul(unity_ObjectToWorld, v.vertex);
 
+				//for( 
+
+				//float height = vertexws.y + tex2Dlod(_MainTex, float4(v.uv + float2(i,j) * float2(1.0/320, 1.0/240), 0, 0)).x;
 				float height = vertexws.y + tex2Dlod(_MainTex, float4(v.uv, 0, 0)).x;
 
 				vertexws = float4(vertexws.x, height, vertexws.z , vertexws.w);
