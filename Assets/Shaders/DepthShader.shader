@@ -52,16 +52,17 @@
 			{
 				fixed4 color = fixed4(1.0, 1.0, 1.0, 1.0);
 
-				if (height < 0.00f) { color = fixed4(0.00,0.20,0.40,1.0);}
-				else if (height < 0.07f) { color = fixed4(0.07,0.42,0.63,1.0);}
-				else if (height < 0.13f) { color = fixed4(0.53,0.81,0.98,1.0);}
-				else if (height < 0.20f) { color = fixed4(0.69,0.89,1.00,1.0);}
-				else if (height < 0.27f) { color = fixed4(0.00,0.38,0.28,1.0);}
-				else if (height < 0.33f) { color = fixed4(0.06,0.48,0.18,1.0);}
-				else if (height < 0.40f) { color = fixed4(0.91,0.84,0.49,1.0);}
-				else if (height < 0.47f) { color = fixed4(0.63,0.26,0.00,1.0);}
-				else if (height < 0.53f) { color = fixed4(0.51,0.12,0.12,1.0);}
-				else if (height < 0.60f) { color = fixed4(1.00,1.00,1.00,1.0);}
+		if (height < 0.00f) { color = fixed4(0.00,0.20,0.40,1.0);}
+	else if (height < 0.05f) { color = fixed4(0.07,0.42,0.63,1.0);}
+	else if (height < 0.055f) { color = fixed4(0,0,0, 1.0);}
+	else if (height < 0.09f) { color = fixed4(0.53,0.81,0.98,1.0);}
+	else if (height < 0.12f) { color = fixed4(0.69,0.89,1.00,1.0);}
+	else if (height < 0.15f) { color = fixed4(0.00,0.38,0.28,1.0);}
+	else if (height < 0.19f) { color = fixed4(0.06,0.48,0.18,1.0);}
+	else if (height < 0.21f) { color = fixed4(0.91,0.84,0.49,1.0);}
+	else if (height < 0.25f) { color = fixed4(0.63,0.26,0.00,1.0);}
+	else if (height < 0.62f) { color = fixed4(0.51,0.12,0.12,1.0);}
+	else if (height < 0.70f) { color = fixed4(1.00,1.00,1.00,1.0);}
 
 				return color;
 

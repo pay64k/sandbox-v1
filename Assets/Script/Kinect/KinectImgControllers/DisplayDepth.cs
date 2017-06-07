@@ -25,7 +25,6 @@ public class DisplayDepth : MonoBehaviour {
 
     public float alpha = 0.5f;
 
-    private bool _saved = true;
 
     private float[] previous_data;
 
