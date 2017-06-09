@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("Texture", 2D) = "white" {}
-		//HeightMapFloat("Texture", 2D) = "white" {}
+		_ColorMap("Texture", 2D) = "white" {}
 	}
 	SubShader
 	{
@@ -36,6 +36,7 @@
 			};
 
 			sampler2D _MainTex;
+			sampler2D _ColorMap;
 			float4 _MainTex_ST;
 			sampler2D HeightMap;
 
@@ -46,6 +47,29 @@
 				if( max(0.0f, (uv.x * N) - floor(uv.x * N)) < 0.1f/N) {
 					fragColor = fixed4(0.0, 0.0, 0.0, 1.0);
 				}
+			}
+
+			fixed4 get_color_from_map(float height)
+			{
+				float amount = 13.0f;
+				fixed4 color = fixed4(1.0, 1.0, 1.0, 1.0);
+
+				if (height < 0.00f) { color = tex2Dlod(_ColorMap,0/amount);}
+				else if (height < 0.01f) { color = tex2Dlod(_ColorMap,1/amount);}
+				else if (height < 0.08f) { color = tex2Dlod(_ColorMap,2/amount);}
+				else if (height < 0.10f) { color = tex2Dlod(_ColorMap,3/amount);}
+				else if (height < 0.13f) { color = tex2Dlod(_ColorMap,4/amount);}
+				else if (height < 0.16f) { color = tex2Dlod(_ColorMap,5/amount);}
+				else if (height < 0.19f) { color = tex2Dlod(_ColorMap,6/amount);}
+				else if (height < 0.22f) { color = tex2Dlod(_ColorMap,7/amount);}
+				else if (height < 0.25f) { color = tex2Dlod(_ColorMap,8/amount);}
+				else if (height < 0.28f) { color = tex2Dlod(_ColorMap,9/amount);}
+				else if (height < 0.31f) { color = tex2Dlod(_ColorMap,10/amount);}
+				else if (height < 0.34f) { color = tex2Dlod(_ColorMap,11/amount);}
+				else if (height < 0.37f) { color = tex2Dlod(_ColorMap,12/amount);}
+
+				return color;
+
 			}
 
 			fixed4 get_color(float height)
@@ -81,7 +105,8 @@
 
 				vertexws = float4(vertexws.x, height, vertexws.z , vertexws.w);
 				
-				o.color = get_color(height);
+				//o.color = get_color(height);
+				o.color = get_color_from_map(height);
 				//o.color = lines(v.uv);
 
 				o.vertex = mul(UNITY_MATRIX_VP, vertexws);
