@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using AForge.Imaging.Filters;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 [RequireComponent(typeof(Renderer))]
 public class DisplayDepth : MonoBehaviour {
@@ -23,7 +24,8 @@ public class DisplayDepth : MonoBehaviour {
 
     private float[] previous_data;
     private short[] current_data;
-    GaussianBlur blurFilter = new GaussianBlur(4, 11);
+    GaussianBlur filter = new GaussianBlur(4, 11);
+    //AdaptiveSmoothing filter = new AdaptiveSmoothing();
     Bitmap bitmap;
     
     void Start () {
@@ -49,6 +51,10 @@ public class DisplayDepth : MonoBehaviour {
 		{
 
             current_data = dw.depthImg;
+
+            if (enableFiltering)
+                FilterImage(current_data);
+
             float[] current_data_float = new float[current_data.Length];
 
             for (int i=0;i< current_data.Length; i++)
@@ -67,8 +73,7 @@ public class DisplayDepth : MonoBehaviour {
             {
                 previous_data_mapped[i] = (short)MapRange(previous_data[i], 0f, 1f, 0, 255f);
             }
-            if(enableFiltering)
-                FilterImage(previous_data_mapped);
+
             tex.SetPixels32(convertDepthToColor(previous_data_mapped));
                         
             tex.Apply(false);
@@ -115,6 +120,7 @@ public class DisplayDepth : MonoBehaviour {
         System.Drawing.Rectangle ImageBounds = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
         System.Drawing.Imaging.ImageLockMode Mode = System.Drawing.Imaging.ImageLockMode.ReadWrite;
         System.Drawing.Imaging.PixelFormat Format = bitmap.PixelFormat;
+        //System.Drawing.Imaging.PixelFormat Format = PixelFormat.Format24bppRgb;
         System.Drawing.Imaging.BitmapData BitmapData = bitmap.LockBits(ImageBounds, Mode, Format);
 
         System.IntPtr ptr = BitmapData.Scan0;
@@ -124,7 +130,7 @@ public class DisplayDepth : MonoBehaviour {
         bitmap.UnlockBits(BitmapData);
 
         //Apply Filter
-        blurFilter.ApplyInPlace(bitmap);
+        filter.ApplyInPlace(bitmap);
 
         //Copy Bitmap back to Image
         BitmapData = bitmap.LockBits(ImageBounds, Mode, Format);
