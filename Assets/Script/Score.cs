@@ -4,18 +4,11 @@ using UnityEngine;
 using System.Diagnostics;
 using System;
 
-public class Score : MonoBehaviour {
+public class RunScoreExe : MonoBehaviour {
 
-    //private DepthWrapper dw;
-    //private FileSaver fSaver;
-
-	// Use this for initialization
 	void Start () {
-        //dw = this.GetComponent<DepthWrapper>();
-        //fSaver = new FileSaver();
 	}
 	
-	// Update is called once per frame
 	void Update () {
         
 	}
@@ -23,7 +16,6 @@ public class Score : MonoBehaviour {
     public void SendDepthMap(short[] depthMap)
     {
         //print("Starting exe");
-        //string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "textFile.bat");
         string exeFilePath = @"C:\MatchBornholm\ARRegistration.EXE";
         try
         {

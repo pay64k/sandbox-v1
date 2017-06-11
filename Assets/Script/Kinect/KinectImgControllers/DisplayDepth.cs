@@ -11,12 +11,7 @@ public class DisplayDepth : MonoBehaviour {
 
     public GameObject ScoreObject;
 
-    public float ScoreDisplayTime = 5f; 
-
-    private FileSaver fSaver = new FileSaver();
-    private Score score;
-
-    private bool update = true;
+    private bool updateMapProjection = true;
     
     private Texture2D tex;
 
@@ -24,11 +19,16 @@ public class DisplayDepth : MonoBehaviour {
     public float maxHeight;
 
     public float alpha = 0.5f;
-
+    public bool enableFiltering = true;
 
     private float[] previous_data;
-
+    private short[] current_data;
+    GaussianBlur blurFilter = new GaussianBlur(4, 11);
+    Bitmap bitmap;
+    
     void Start () {
+        bitmap = new System.Drawing.Bitmap(320, 240, System.Drawing.Imaging.PixelFormat.Format16bppGrayScale);
+        updateMapProjection = true;
 		tex = new Texture2D(320,240,TextureFormat.ARGB32,false);
         tex.filterMode = FilterMode.Bilinear;
         tex.Apply();
@@ -40,18 +40,15 @@ public class DisplayDepth : MonoBehaviour {
         }
         GetComponent<Renderer>().material.mainTexture = tex;
 
-        score = GetComponent<Score>();
-        ScoreObject.SetActive(false);
     }
 	
-	// Update is called once per frame
 	void Update () {
         Renderer renderer = GetComponent<Renderer>();
 
-        if (dw.pollDepth() && update)
+        if (dw.pollDepth() && updateMapProjection)
 		{
 
-            short[] current_data = dw.depthImg;
+            current_data = dw.depthImg;
             float[] current_data_float = new float[current_data.Length];
 
             for (int i=0;i< current_data.Length; i++)
@@ -70,18 +67,13 @@ public class DisplayDepth : MonoBehaviour {
             {
                 previous_data_mapped[i] = (short)MapRange(previous_data[i], 0f, 1f, 0, 255f);
             }
-
+            if(enableFiltering)
+                FilterImage(previous_data_mapped);
             tex.SetPixels32(convertDepthToColor(previous_data_mapped));
                         
             tex.Apply(false);
             renderer.material.SetTexture("_MainTex", tex);
         }
-        if (Input.GetKeyDown("c"))
-            fSaver.SaveDepthMap(dw.depthImg);
-
-        if (Input.GetKeyDown("f1"))
-            StartCoroutine(ShowScore());
-        
     }
 	
 	private Color32[] convertDepthToColor(short[] depthBuf)
@@ -97,21 +89,6 @@ public class DisplayDepth : MonoBehaviour {
 		return img;
 	}
 	
-	//private Color32[] convertPlayersToCutout(bool[,] players)
-	//{
-	//	Color32[] img = new Color32[320*240];
-	//	for (int pix = 0; pix < 320*240; pix++)
-	//	{
-	//		if(players[0,pix]|players[1,pix]|players[2,pix]|players[3,pix]|players[4,pix]|players[5,pix])
-	//		{
-	//			img[pix].a = (byte)255;
-	//		} else {
-	//			img[pix].a = (byte)0;
-	//		}
-	//	}
-	//	return img;
-	//}
-
     int MapRange(float x, float in_min, float in_max, float out_min, float out_max)
     {
         return Mathf.RoundToInt((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
@@ -122,20 +99,40 @@ public class DisplayDepth : MonoBehaviour {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
-    IEnumerator ShowScore()
+    public void disableMapUpdate()
     {
-        update = !update;
-        fSaver.SaveBornholm(dw.depthImg);
-        score.SendDepthMap(dw.depthImg);
-        var result = fSaver.ReadScore();
-        print("RESULT: " + float.Parse(result));
-        ScoreObject.SetActive(true);
-        float mappedResult = MapRange2(float.Parse(result), 0.72f, 0.92f, 0.1f, 1f);
-        print("MAPPED: " + mappedResult.ToString());
-        ScoreObject.GetComponentInChildren<TextMesh>().text = (mappedResult * 100).ToString("F2") + "%";
-        yield return new WaitForSeconds(ScoreDisplayTime);
-        ScoreObject.SetActive(false);
-        update = !update;
+        updateMapProjection = false;
+    }
+
+    public void enableMapUpdate()
+    {
+        updateMapProjection = true;
+    }
+
+    void FilterImage(short[] depthImage)
+    {
+        // Copy Image to Bitmap
+        System.Drawing.Rectangle ImageBounds = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
+        System.Drawing.Imaging.ImageLockMode Mode = System.Drawing.Imaging.ImageLockMode.ReadWrite;
+        System.Drawing.Imaging.PixelFormat Format = bitmap.PixelFormat;
+        System.Drawing.Imaging.BitmapData BitmapData = bitmap.LockBits(ImageBounds, Mode, Format);
+
+        System.IntPtr ptr = BitmapData.Scan0;
+
+        System.Runtime.InteropServices.Marshal.Copy(depthImage, 0, ptr, depthImage.Length);
+
+        bitmap.UnlockBits(BitmapData);
+
+        //Apply Filter
+        blurFilter.ApplyInPlace(bitmap);
+
+        //Copy Bitmap back to Image
+        BitmapData = bitmap.LockBits(ImageBounds, Mode, Format);
+
+        ptr = BitmapData.Scan0;
+        System.Runtime.InteropServices.Marshal.Copy(ptr, depthImage, 0, depthImage.Length);
+
+        bitmap.UnlockBits(BitmapData);
     }
 
 }
