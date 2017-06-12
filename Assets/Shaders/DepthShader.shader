@@ -4,6 +4,7 @@
 	{
 		_MainTex("Texture", 2D) = "white" {}
 		_ColorMap("Texture", 2D) = "white" {}
+		_EnableCountour ("Enable Countour", Float) = 1
 	}
 	SubShader
 	{
@@ -40,6 +41,8 @@
 			float4 _MainTex_ST;
 			sampler2D HeightMap;
 
+			float _EnableCountour;
+
 			fixed4 lines(out fixed4 fragColor, in fixed4 fragCoord){
 				fixed2 uv = fragCoord.xy / 2;
 				fragColor = fixed4(1.0, 1.0, 1.0, 1.0);
@@ -53,19 +56,38 @@
 			{
 				float amount = 13.0f;
 				fixed4 color = fixed4(1.0, 1.0, 1.0, 1.0);
+				fixed4 blackLine =  fixed4(0, 0 , 0, 1.0);
+				float offset = 0;
+				if(_EnableCountour == 1){
+					offset = 0.004f;
+				}
+				else{
+					offset = 0.000f;
+				}
 
 				if (height < 0.00f) { color = tex2Dlod(_ColorMap,0/amount);}
 				else if (height < 0.01f) { color = tex2Dlod(_ColorMap,1/amount);}
+				else if (height < 0.01f + offset) { color = blackLine;}
 				else if (height < 0.08f) { color = tex2Dlod(_ColorMap,2/amount);}
+				else if (height < 0.08f + offset) { color = blackLine;}
 				else if (height < 0.10f) { color = tex2Dlod(_ColorMap,3/amount);}
+				else if (height < 0.10f + offset) { color = blackLine;}
 				else if (height < 0.13f) { color = tex2Dlod(_ColorMap,4/amount);}
+				else if (height < 0.13f + offset) { color = blackLine;}
 				else if (height < 0.16f) { color = tex2Dlod(_ColorMap,5/amount);}
+				else if (height < 0.16f + offset) { color = blackLine;}
 				else if (height < 0.19f) { color = tex2Dlod(_ColorMap,6/amount);}
+				else if (height < 0.19f + offset) { color = blackLine;}
 				else if (height < 0.22f) { color = tex2Dlod(_ColorMap,7/amount);}
+				else if (height < 0.22f + offset) { color = blackLine;}
 				else if (height < 0.25f) { color = tex2Dlod(_ColorMap,8/amount);}
+				else if (height < 0.25f + offset) { color = blackLine;}
 				else if (height < 0.28f) { color = tex2Dlod(_ColorMap,9/amount);}
+				else if (height < 0.28f + offset) { color = blackLine;}
 				else if (height < 0.31f) { color = tex2Dlod(_ColorMap,10/amount);}
+				else if (height < 0.31f + offset) { color = blackLine;}
 				else if (height < 0.34f) { color = tex2Dlod(_ColorMap,11/amount);}
+				else if (height < 0.34f + offset) { color = blackLine;}
 				else if (height < 0.37f) { color = tex2Dlod(_ColorMap,12/amount);}
 
 				return color;

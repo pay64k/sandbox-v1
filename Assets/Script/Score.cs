@@ -1,17 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿
 using System.Diagnostics;
 using System;
 
-public class RunScoreExe : MonoBehaviour {
-
-	void Start () {
-	}
-	
-	void Update () {
-        
-	}
+public class RunScoreExe{
 
     public void SendDepthMap(short[] depthMap)
     {
@@ -37,7 +28,7 @@ public class RunScoreExe : MonoBehaviour {
         }
         catch (Exception e)
         {
-            print(e);
+
         }
     }
 

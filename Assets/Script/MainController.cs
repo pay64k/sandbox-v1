@@ -18,7 +18,8 @@ public class MainController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        scoreExe = GetComponent<RunScoreExe>();
+        //scoreExe = GetComponent<RunScoreExe>();
+        scoreExe = new RunScoreExe();
         scoreObject.SetActive(false);
         ranks = readRanksFile(ranksFile);
     }
@@ -32,19 +33,20 @@ public class MainController : MonoBehaviour {
             StartCoroutine(ShowScore());
         }
 
-       
+        if (Input.GetKeyDown("f"))
+            planeKinectV1.enableFiltering = !planeKinectV1.enableFiltering;
 
-        if (Input.GetKeyDown("c"))
+       if (Input.GetKeyDown("c"))
             fSaver.SaveDepthMap(dw.depthImg);
     }
 
     IEnumerator ShowScore()
     {
-        //planeKinectV1.disableMapUpdate();
-        //fSaver.SaveBornholm(dw.depthImg);
-        //scoreExe.SendDepthMap(dw.depthImg);
-        //var result = fSaver.ReadScore();
-        var result = "0.72";
+        planeKinectV1.disableMapUpdate();
+        fSaver.SaveBornholm(dw.depthImg);
+        scoreExe.SendDepthMap(dw.depthImg);
+        var result = fSaver.ReadScore();
+        //var result = "0.72";
         float mappedResult = CalculatePercentage(float.Parse(result), 0.72f, 0.92f, 0.1f, 1f);
         setTextInChild(scoreObject, "ScoreText", (mappedResult).ToString("F2") + "%");
         setTextInChild(scoreObject, "RankText", getRank(mappedResult));
@@ -61,7 +63,7 @@ public class MainController : MonoBehaviour {
             result = 0;
         if (result > 1)
             result = 1;
-        print(result * 100);
+        //print(result * 100);
         return result * 100 ;
     }
 
