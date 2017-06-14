@@ -15,6 +15,7 @@ public class MainController : MonoBehaviour {
     private FileSaver fSaver = new FileSaver();
     private RunScoreExe scoreExe;
     private string[] ranks;
+    private bool showingScore = false;
 
     // Use this for initialization
     void Start () {
@@ -27,7 +28,7 @@ public class MainController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (serialManager.CheckButton())
+        if ((serialManager.CheckButton() || Input.GetKeyDown("f1")) && !showingScore)
         {
             //print("pressed");
             StartCoroutine(ShowScore());
@@ -42,6 +43,7 @@ public class MainController : MonoBehaviour {
 
     IEnumerator ShowScore()
     {
+        showingScore = !showingScore;
         planeKinectV1.disableMapUpdate();
         fSaver.SaveBornholm(dw.depthImg);
         scoreExe.SendDepthMap(dw.depthImg);
@@ -54,6 +56,7 @@ public class MainController : MonoBehaviour {
         yield return new WaitForSeconds(ScoreDisplayTime);
         scoreObject.SetActive(false);
         planeKinectV1.enableMapUpdate();
+        showingScore = !showingScore;
     }
 
     float CalculatePercentage(float x, float in_min, float in_max, float out_min, float out_max)

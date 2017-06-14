@@ -24,7 +24,7 @@ public class DisplayDepth : MonoBehaviour {
 
     private float[] previous_data;
     private short[] current_data;
-    GaussianBlur filter = new GaussianBlur(4, 11);
+    GaussianBlur filter = new GaussianBlur(2, 7); // (4, 11) for greater smoothing but lower FPS (~6)
     //AdaptiveSmoothing filter = new AdaptiveSmoothing();
     Bitmap bitmap;
     
